@@ -1,12 +1,33 @@
-import React from 'react';
-import './App.css';
-export default () => (
-  <div className="App">
-    <header className="App-header">
-      <h1 className="App-title">Welcome To My Hello World!</h1>
-    </header>
-    <p className="App-intro">
-      My name is Jan. Welcome, and hello!
-    </p>
-  </div>
-);
+import React, { Component } from "react";
+import socketIOClient from "socket.io-client";
+
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      response: false,
+      endpoint: "http://127.0.0.1:4001"
+    };
+  }
+
+  componentDidMount() {
+    const { endpoint } = this.state;
+    const socket = socketIOClient(endpoint);
+    socket.on("FromAPI", data => this.setState({ response: data }));
+  }
+
+  render() {
+    const { response } = this.state;
+    return (
+      <div style={{ textAlign: "center" }}>
+        {response
+          ? <p>
+              The temperature in Florence is: {response} °F
+            </p>
+          : <p>Loading...</p>}
+      </div>
+    );
+  }
+}
+
+export default App;
