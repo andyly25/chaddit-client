@@ -15,6 +15,7 @@
   padding: 20px;
   background-color: #2c303b;
   color: white;
+  overflow-y: scroll;
 }
 
 .chatListContainer {
