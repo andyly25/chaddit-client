@@ -45,6 +45,7 @@ class ChatScreen extends Component {
   // }
 
   componentDidMount () {
+    const port = 'https://chaddit-server.herokuapp.com' || 'http://localhost:3001';
     // note to self, to store instance locator and key in safe spot
     // also a config file for url
     // instantiate chatkit chatmanager with given fields
@@ -54,7 +55,7 @@ class ChatScreen extends Component {
       userId: this.props.currentUsername,
       connectionTimeout: 20000,
       tokenProvider: new Chatkit.TokenProvider({
-        url: 'http://localhost:3001/authenticate'
+        url: `${port}/authenticate`
       }),
       // leaving this here to debug chatkit in case errors
       // logger: {
