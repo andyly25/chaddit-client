@@ -1,0 +1,20 @@
+.message-ulist {
+  list-style: none;
+}
+
+.message-li {
+  margin: 13px 0;
+}
+
+.message-container {
+  overflow-y: scroll;
+  flex: 1;
+}
+
+.sender-username {
+  font-weight: bold;
+}
+
+.message {
+  font-size: 15px;
+}
