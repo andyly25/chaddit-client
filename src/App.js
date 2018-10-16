@@ -27,7 +27,7 @@ class App extends Component {
   }
 
   onUsernameSubmitted(username) {
-    const port = 'https://chaddit-server.herokuapp.com/' || 'http://localhost:3001'
+    const port = 'https://chaddit-server.herokuapp.com' || 'http://localhost:3001'
     fetch(`${port}/users`, {
       method: 'POST',
       headers: {
