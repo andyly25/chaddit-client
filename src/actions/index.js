@@ -2,7 +2,8 @@ import { takeLatest, call, put } from 'redux-saga/effects';
 import axios from 'axios';
 
 function getUsers(username) {
-  return axios.post('http://localhost:3001/users', { username })
+  const port = 'https://chaddit-server.herokuapp.com/' || 'http://localhost:3001'
+  return axios.post(`${port}/users`, { username })
   .then(result => new Promise((resolve, reject) => {
     resolve(username);
   })).catch(err => { return username })
