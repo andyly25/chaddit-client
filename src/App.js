@@ -15,6 +15,7 @@ class App extends Component {
     }
   }
 
+  // this uses the inbuild React localstorage to help store state values for use
   setUsernameScreen(un, sn) {
     localStorage.setItem('currentUsername', un);
     localStorage.setItem('currentScreen', sn)
@@ -45,6 +46,14 @@ class App extends Component {
       .catch(error => console.error('error', error));
   }
 
+  // logout removes what was stored in localstorage, then reloads page
+  onLogout() {
+    this.props.dispatch({type: 'USER_LOGOUT'});
+    localStorage.removeItem('currentUsername');
+    localStorage.removeItem('currentScreen');
+    window.location.reload();
+  }
+
   render() {
     // we conditionally render screen based on this.state.currentScreen
     if (this.state.currentScreen === '') {
@@ -54,8 +63,10 @@ class App extends Component {
       return <UsernameForm onSubmit={this.onUsernameSubmitted.bind(this)} />
     }
     if (this.state.currentScreen === 'ChatScreen') {
-
-      return <ChatScreen currentUsername={this.state.currentUsername} />
+      return <ChatScreen 
+        currentUsername={this.state.currentUsername}
+        onLogout={this.onLogout.bind(this)}
+      />
     }
   }
 }

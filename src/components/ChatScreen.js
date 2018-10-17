@@ -38,6 +38,12 @@ class ChatScreen extends Component {
     })
   }
 
+  // let's users logout
+  onLogout(e) {
+    e.preventDefault();
+    this.props.onLogout();
+  }
+
   // // add scroll to bottom of chatmessage later
   // // https://stackoverflow.com/questions/37620694/how-to-scroll-to-bottom-in-react
   // scrollToBottom() {
@@ -117,6 +123,11 @@ class ChatScreen extends Component {
       <div className="container">
         <div className="chatContainer">
           <aside className="onlineListContainer">
+            <div>
+              <h3 className="welcomeContainer">Welcome {this.state.currentUser.name}
+                <a className="logoutContainer" onClick={this.onLogout.bind(this)}>Log out</a>
+              </h3>
+            </div>
             <WhosOnlineList 
               currentUser={this.state.currentUser}
               users={this.state.currentRoom.users}
