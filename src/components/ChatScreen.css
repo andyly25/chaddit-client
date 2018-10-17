@@ -35,3 +35,14 @@
 .welcomeContainer {
   margin: 15px 0 5px;
 }
+
+.chatListHeader {
+  border-bottom: 1px solid black;
+  margin-bottom: 10px;
+}
+
+.headerTitle {
+  display: inline-block;
+  margin-left: 10px;
+  margin-bottom: 5px;
+}

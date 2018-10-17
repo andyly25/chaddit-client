@@ -134,6 +134,9 @@ class ChatScreen extends Component {
             />
           </aside>
           <section className="chatListContainer">
+            <div className="chatListHeader">
+              <h3 className="headerTitle">Room: {this.state.currentRoom.name}</h3>
+            </div>
             <MessageList
               messages={this.state.messages}
             />
