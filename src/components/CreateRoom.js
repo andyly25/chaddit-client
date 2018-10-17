@@ -6,7 +6,8 @@ class CreateRoom extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      roomName: ''
+      roomName: '',
+      roomPrivacy: false
     }
   }
 
@@ -16,10 +17,22 @@ class CreateRoom extends Component {
   //   this.setState({ text: '' });
   // }
 
+
+  // currently need to work on this
   onChange(e) {
     this.setState({ roomName: e.target.value });
     if (this.props.onChange) {
       this.props.onChange();
+    }
+  }
+
+  onKeyDown(e) {
+    e.preventDefault();
+    if (e.keyCode === 13) {
+      this.setState({ 
+        roomName: this.state.roomName,
+        roomPrivacy: this.state.roomPrivacy
+      });
     }
   }
 

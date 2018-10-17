@@ -22,6 +22,7 @@ class ChatScreen extends Component {
       messages: [],
       rooms: [],
       roomName: '',
+      roomPrivacy: false,
       usersWhoAreTyping: []
     }
   }
@@ -68,8 +69,16 @@ class ChatScreen extends Component {
       })
   }
 
+  // keeps track of user input for create room name
   onChangeRoomText(e) {
-    this.setState({ channelName: e.target.value })
+    // this.setState({ channelName: e.target.value })
+  }
+
+  // if 'Enter' key is pressed we create a new room
+  onEnterRoom(e) {
+    // if (e.keyCode === 13) {
+    //   this.createRoom(this.state.roomName, this.state.roomPrivacy);
+    // }
   }
 
   // // add scroll to bottom of chatmessage later
@@ -162,6 +171,8 @@ class ChatScreen extends Component {
             />
             <CreateRoom
               value={this.state.roomName}
+              onChange={this.onChangeRoomText.bind(this)}
+              onKeyDown={this.onEnterRoom.bind(this)}
             />
           </aside>
           <section className="chatListContainer">
@@ -170,7 +181,6 @@ class ChatScreen extends Component {
             </div>
             <MessageList
               messages={this.state.messages}
-              onChange={this.onChangeRoomText.bind(this)}
             />
             <TypingIndicator usersWhoAreTyping={this.state.usersWhoAreTyping} />
             <SendMessageForm
