@@ -7,7 +7,8 @@ import Chatkit from '@pusher/chatkit';
 import MessageList from './MessageList';
 import SendMessageForm from './SendMessageForm';
 import TypingIndicator from './TypingIndicator';
-import WhosOnlineList from './WhosOnlineList'
+import WhosOnlineList from './WhosOnlineList';
+import CreateRoom from './CreateRoom';
 
 // import css
 import './ChatScreen.css'
@@ -19,6 +20,8 @@ class ChatScreen extends Component {
       currentUser: {},
       currentRoom: {},
       messages: [],
+      rooms: [],
+      roomName: '',
       usersWhoAreTyping: []
     }
   }
@@ -42,6 +45,31 @@ class ChatScreen extends Component {
   onLogout(e) {
     e.preventDefault();
     this.props.onLogout();
+  }
+
+  // entering a different room
+  // https://docs.pusher.com/chatkit/reference/javascript#create-a-room
+  createRoom(roomName, isPrivate=false, isUnique=false) {
+    this.state.currentUser
+      .createRoom({
+        name: roomName,
+        private: isPrivate
+      }).then(room => {
+        // if isUnique = true in this case
+        if (!isUnique) {
+          this.setState({ roomName: '' });
+          this.setState({ rooms: [...this.state.rooms, room ]});
+        } else {
+          return room.id;
+        }
+      })
+      .catch(err => {
+        console.log('Error: ', err);
+      })
+  }
+
+  onChangeRoomText(e) {
+    this.setState({ channelName: e.target.value })
   }
 
   // // add scroll to bottom of chatmessage later
@@ -132,6 +160,9 @@ class ChatScreen extends Component {
               currentUser={this.state.currentUser}
               users={this.state.currentRoom.users}
             />
+            <CreateRoom
+              value={this.state.roomName}
+            />
           </aside>
           <section className="chatListContainer">
             <div className="chatListHeader">
@@ -139,6 +170,7 @@ class ChatScreen extends Component {
             </div>
             <MessageList
               messages={this.state.messages}
+              onChange={this.onChangeRoomText.bind(this)}
             />
             <TypingIndicator usersWhoAreTyping={this.state.usersWhoAreTyping} />
             <SendMessageForm
