@@ -8,7 +8,7 @@ import MessageList from './MessageList';
 import SendMessageForm from './SendMessageForm';
 import TypingIndicator from './TypingIndicator';
 import WhosOnlineList from './WhosOnlineList';
-import CreateRoom from './CreateRoom';
+// import CreateRoom from './CreateRoom';
 
 // import css
 import './ChatScreen.css'
@@ -60,6 +60,7 @@ class ChatScreen extends Component {
         if (!isUnique) {
           this.setState({ roomName: '' });
           this.setState({ rooms: [...this.state.rooms, room ]});
+          console.log('createRoom rooms:', this.state.rooms);
         } else {
           return room.id;
         }
@@ -71,14 +72,16 @@ class ChatScreen extends Component {
 
   // keeps track of user input for create room name
   onChangeRoomText(e) {
-    // this.setState({ channelName: e.target.value })
+    this.setState({ roomName: e.target.value })
   }
 
   // if 'Enter' key is pressed we create a new room
   onEnterRoom(e) {
-    // if (e.keyCode === 13) {
-    //   this.createRoom(this.state.roomName, this.state.roomPrivacy);
-    // }
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      console.log('current room name:', this.state.roomName);
+      this.createRoom(this.state.roomName, this.state.roomPrivacy);
+    }
   }
 
   // // add scroll to bottom of chatmessage later
@@ -115,7 +118,17 @@ class ChatScreen extends Component {
     chatManager
       .connect()
       .then(currentUser => {
-        this.setState({ currentUser });
+        this.setState({ currentUser });    
+        //let's see all joinable rooms for user
+        currentUser.getJoinableRooms()
+          .then(rooms => {
+            // combines all of the rooms into one array without mutating
+            const roomsArray = [...this.state.rooms, ...rooms, ...currentUser.rooms];
+            this.setState({rooms: roomsArray});
+          })
+          .catch(err => {
+            console.log('Error getJoinableRooms():', err);
+          })
         // call subscribeToRoom on curr user, takes event handler onNewMessage
         // called in real tiem each time new message arrives
         // call forceUpdate which tells React to evaluate currentRoom.users and update the UI
@@ -169,11 +182,22 @@ class ChatScreen extends Component {
               currentUser={this.state.currentUser}
               users={this.state.currentRoom.users}
             />
-            <CreateRoom
+            {/*<CreateRoom
               value={this.state.roomName}
               onChange={this.onChangeRoomText.bind(this)}
               onKeyDown={this.onEnterRoom.bind(this)}
-            />
+            />*/}
+            <div>
+              <form>
+                <input 
+                  type="text"
+                  placeholder="Create a Room"
+                  onChange={this.onChangeRoomText.bind(this)}
+                  onKeyDown={this.onEnterRoom.bind(this)}
+                  defaultValue={this.state.roomName}
+                />
+              </form>
+            </div>
           </aside>
           <section className="chatListContainer">
             <div className="chatListHeader">
