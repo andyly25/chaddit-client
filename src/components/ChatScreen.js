@@ -8,6 +8,7 @@ import MessageList from './MessageList';
 import SendMessageForm from './SendMessageForm';
 import TypingIndicator from './TypingIndicator';
 import WhosOnlineList from './WhosOnlineList';
+import RoomList from './RoomList';
 // import CreateRoom from './CreateRoom';
 
 // import css
@@ -119,7 +120,7 @@ class ChatScreen extends Component {
       .connect()
       .then(currentUser => {
         this.setState({ currentUser });    
-        //let's see all joinable rooms for user
+        //let's grab all joinable rooms for user
         currentUser.getJoinableRooms()
           .then(rooms => {
             // combines all of the rooms into one array without mutating
@@ -187,6 +188,13 @@ class ChatScreen extends Component {
               onChange={this.onChangeRoomText.bind(this)}
               onKeyDown={this.onEnterRoom.bind(this)}
             />*/}
+            { // display rooms if we have rooms
+              this.state.rooms.length > 0
+              ? <RoomList
+                  rooms={this.state.rooms}
+                />
+              : ''
+            }
             <div>
               <form>
                 <input 
