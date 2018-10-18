@@ -6,22 +6,24 @@ import './WhosOnlineList.css';
 class WhosOnlineList extends Component {
   renderUsers() {
     return (
-      <ul>
-        {this.props.users.map((user, index) => {
-          if(user.id === this.props.currentUser.id) {
+      <div className="wol-container">
+        <ul>
+          {this.props.users.map((user, index) => {
+            if(user.id === this.props.currentUser.id) {
+              return (
+                <WhosOnlineListItem key={index} presenceState="online">
+                  {user.name} (You)
+                </WhosOnlineListItem>
+              );
+            }
             return (
-              <WhosOnlineListItem key={index} presenceState="online">
-                {user.name} (You)
+              <WhosOnlineListItem key={index} presenceState={user.presence.state}>
+                {user.name}
               </WhosOnlineListItem>
             );
-          }
-          return (
-            <WhosOnlineListItem key={index} presenceState={user.presence.state}>
-              {user.name}
-            </WhosOnlineListItem>
-          );
-        })}
-      </ul>
+          })}
+        </ul>
+      </div>
     )
   }
 
@@ -38,16 +40,16 @@ class WhosOnlineListItem extends Component {
   render() {
 
     return (
-      <li className="wol-li">
-        <div 
-          className="wol-div"
-          style={{
-            backgroundColor:
-              this.props.presenceState === 'online' ? '#539eff' : '#414756'
-          }}
-        />
-        {this.props.children}
-      </li>
+        <li className="wol-li">
+          <div 
+            className="wol-div"
+            style={{
+              backgroundColor:
+                this.props.presenceState === 'online' ? '#539eff' : '#414756'
+            }}
+          />
+          {this.props.children}
+        </li>
     );
   }
 }
