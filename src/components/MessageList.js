@@ -2,9 +2,14 @@ import React, { Component } from 'react';
 import './MessageList.css';
 
 class MessagesList extends Component {
+  componentDidUpdate() {
+    const el = this.refs.scrollBottom;
+    el.scrollTop = el.scrollHeight;
+  }
+
   render() {
     return (
-      <div className="message-container">
+      <div className="message-container" ref='scrollBottom'>
         <ul className="message-ulist">
           {this.props.messages.map((message, index) => (
             <li key={index} className="message-list">
