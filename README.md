@@ -1,3 +1,6 @@
 # chaddit-client
-- Using surge to host, for now still trying to get a working chat app on different repo
+- Using surge to host
 - http://chaddit-client.surge.sh/ 
+- current making a chat app with chatkit
+- using React JS
+- need to make a better README eventually

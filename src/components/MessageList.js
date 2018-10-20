@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './MessageList.css';
 
 class MessagesList extends Component {
+  // scroll to bottom
+  // https://stackoverflow.com/questions/42670121/scroll-to-bottom-after-componentdidupdate
   componentDidUpdate() {
     const el = this.refs.scrollBottom;
     el.scrollTop = el.scrollHeight;
