@@ -26,6 +26,28 @@ class ChatScreen extends Component {
       roomPrivacy: false,
       usersWhoAreTyping: []
     }
+    const port = 'https://chaddit-server.herokuapp.com' || 'http://localhost:3001';
+    // note to self, to store instance locator and key in safe spot
+    // also a config file for url
+    // instantiate chatkit chatmanager with given fields
+    // with token provder pointing to /authenticate route defined earlier
+    this.chatManager = new Chatkit.ChatManager({
+      instanceLocator: 'v1:us1:5dff3a4f-a6e4-4036-b974-d09e53dc0568',
+      userId: this.props.currentUsername,
+      connectionTimeout: 20000,
+      tokenProvider: new Chatkit.TokenProvider({
+        url: `${port}/authenticate`
+      }),
+      // leaving this here to debug chatkit in case errors
+      // logger: {
+      //   verbose: console.log,
+      //   debug: console.log,
+      //   info: console.log,
+      //   warn: console.log,
+      //   error: console.log,
+      // }
+    })
+
   }
 
   sendTypingEvent() {
@@ -85,6 +107,65 @@ class ChatScreen extends Component {
     }
   }
 
+  //changing rooms
+  onRoomChange(roomId) {
+    const currRoom = this.state.rooms.filter((room) => { return room.id === roomId });
+    this.setState({ currentMemberId: ''});
+    this.setState({ currentRoomId: roomId });
+    this.setState({ currentRoom: currRoom[0] });
+    this.setState({ messages: [] });
+
+    this.chatManager
+      .connect()
+      .then(currentUser => {
+        this.setState({ currentUser })
+        this.setState({ channels: currentUser.rooms });
+        return currentUser.fetchMessages({
+          roomId: roomId
+        })
+          .then(messages => {
+            this.setState({ messages: messages });
+          })
+          .catch(err => {
+            console.log('Error: ', err);
+          })
+      })
+      .catch(err => {
+        console.log('Error: ', err);
+      })
+
+      // Note! copy and pasting is bad!
+      return this.state.currentUser.subscribeToRoom({
+        roomId: roomId,
+        messageLimit: 100,
+        hooks: {
+          onNewMessage: message => {
+            console.log(`${message} sent`);
+            this.setState({
+              messages: [...this.state.messages, message],
+            })
+          },
+          onUserStartedTyping: user => {
+            console.log(`User ${user.name} started typing`);
+            this.setState({
+              usersWhoAreTyping: [...this.state.usersWhoAreTyping, user.name],
+            })
+          },
+          onUserStoppedTyping: user => {
+            console.log(`User ${user.name} stopped typing`);
+            this.setState({
+              usersWhoAreTyping: this.state.usersWhoAreTyping.filter(
+                username => username !== user.name
+              ),
+            })
+          },
+          onUserCameOnline: () => this.forceUpdate(),
+          onUserWentOffline: () => this.forceUpdate(),
+          onUserJoined: () => this.forceUpdate()
+          }
+      })
+  }
+
   // // add scroll to bottom of chatmessage later
   // // https://stackoverflow.com/questions/37620694/how-to-scroll-to-bottom-in-react
   // scrollToBottom() {
@@ -92,31 +173,16 @@ class ChatScreen extends Component {
   // }
 
   componentDidMount () {
-    const port = 'https://chaddit-server.herokuapp.com' || 'http://localhost:3001';
+    // const port = 'https://chaddit-server.herokuapp.com' || 'http://localhost:3001';
     // note to self, to store instance locator and key in safe spot
     // also a config file for url
     // instantiate chatkit chatmanager with given fields
     // with token provder pointing to /authenticate route defined earlier
-    const chatManager = new Chatkit.ChatManager({
-      instanceLocator: 'v1:us1:5dff3a4f-a6e4-4036-b974-d09e53dc0568',
-      userId: this.props.currentUsername,
-      connectionTimeout: 20000,
-      tokenProvider: new Chatkit.TokenProvider({
-        url: `${port}/authenticate`
-      }),
-      // leaving this here to debug chatkit in case errors
-      // logger: {
-      //   verbose: console.log,
-      //   debug: console.log,
-      //   info: console.log,
-      //   warn: console.log,
-      //   error: console.log,
-      // }
-    })
+    
 
     // once initialized, call connect which happens async and a Promise returned
     // get a current user obj that represents current connected user
-    chatManager
+    this.chatManager
       .connect()
       .then(currentUser => {
         this.setState({ currentUser });    
@@ -192,6 +258,8 @@ class ChatScreen extends Component {
               this.state.rooms.length > 0
               ? <RoomList
                   rooms={this.state.rooms}
+                  currentRoomId={this.state.currentRoomId}
+                  onRoomChange={this.onRoomChange.bind(this)}
                 />
               : ''
             }
